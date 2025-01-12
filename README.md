@@ -132,7 +132,9 @@ def bootstrap_auc(clf, X_train, y_train, X_test, y_test, nsamples=2000):
 
 
 # 결과
-예를 들어 신혼 가구의 공공임대주택 입주의향 모델 중 XGBoost 모델은 변수 개수별 모델별로 부트스트랩을 2000번 수행해서 비교한 결과, 17개의 변수를 사용했을 때 가장 성능이 높았습니다.
+결과 해석에 대한 내용입니다.
+
+예를 들어 신혼 가구의 공공임대주택 입주의향 모델 중 XGBoost 모델은 변수 개수별 모델별로 부트스트랩을 2000번 수행해서 비교한 결과, 17개의 변수를 사용했을 때 가장 성능이 높았다면
 
 ![image](https://github.com/user-attachments/assets/badbcfb5-f4da-4244-bb7e-d07d96d65966)
 
