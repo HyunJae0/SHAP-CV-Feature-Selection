@@ -112,6 +112,19 @@ print('test set mean roc_auc(Base)',round(np.mean(base_score),3))
 print('test set mean roc_auc',round(np.mean(skf_scores2),3))
 ```
 
+이 과정 속에서 계산되는 shap value로 shap importance를 확인해서 가장 shap importance가 낮은 변수를 하나씩 제거했습니다. 변수가 하나 남을 때까지 진행했습니다. 그리고 변수 개수만큼 만들어진 모델들에 대해 신뢰 구간 95%에서 2,000번 부트스트랩하여 roc_auc 값을 기준으로 가장 성능이 좋은 모델을 선정했습니다. 
+```
+auc_bootstrap = []
+def bootstrap_auc(clf, X_train, y_train, X_test, y_test, nsamples=2000):
+    for b in range(nsamples):
+        idx = rs.randint(X_train.shape[0], size=X_train.shape[0])
+        clf.fit(X_train[idx], y_train[idx])
+        pred = clf.predict_proba(X_test)[:, 1]
+        roc_auc = roc_auc_score(y_test.ravel(), pred.ravel())
+        auc_bootstrap.append(roc_auc)
+    return np.percentile(auc_bootstrap, (2.5, 97.5))
+```
+
 # 결과
 예를 들어 신혼 가구의 공공임대주택 입주의향 모델 중 XGBoost 모델은 변수 개수별 모델별로 부트스트랩을 2000번 수행해서 비교한 결과, 17개의 변수를 사용했을 때 가장 성능이 높았습니다.
 
