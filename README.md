@@ -11,7 +11,8 @@ SHAP(SHapley Additive exPlanations)
 
 # 코드 실행
 ## 1. Data preprocessing
-아래 Jupyter Notebook으로 기술되어 있음
+아래 Jupyter Notebook으로 기술되어 있음. 
+https://github.com/HyunJae0/SHAP-CV-Feature-Selection/blob/main/preprocessing.ipynb
 
 사용한 데이터는 MDIS에서 제공한 2018, 2019, 2020, 2021년 주거실태조사 결과입니다. 
 
