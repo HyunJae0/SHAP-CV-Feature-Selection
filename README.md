@@ -22,3 +22,8 @@ https://github.com/HyunJae0/SHAP-CV-Feature-Selection/blob/main/preprocessing.ip
 
 이외에도 가구의 재무 건전성을 확인하기 위해 총 소득 대비 생활비의 비중, 총 소득 대비 월평균 주거관리비의 비중, 중/장기부채부담지표, 총 자산 대비 금융/기타 자산의 비중 등 다양한 파생 변수를 추가하였습니다.
 
+## 2. SHAP
+
+
+# 결과
+
