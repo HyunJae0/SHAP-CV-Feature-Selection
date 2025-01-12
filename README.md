@@ -99,7 +99,7 @@ print('test set mean roc_auc',round(np.mean(skf_scores2),3))
 
 ![image](https://github.com/user-attachments/assets/badbcfb5-f4da-4244-bb7e-d07d96d65966)
 
-이 17개의 변수들이 신혼 가구의 공공임대주택 입주의향 모델에 어떠한 영향을 미쳤는지 shap value를 plot해서 확인할 수 있습니다.
+이 17개의 변수들이 신혼 가구의 공공임대주택 입주의향 모델에 어떠한 영향을 미쳤는지 shap value를 plot해서 확인할 수 있습니다. 단, 이 결과는 모델이 왜 양성과 음성을 예측했는지에 대한 행동을 설명하는 것이지 인과관계를 설명하는 것이 아닙니다.
 
 ![image](https://github.com/user-attachments/assets/8eed24a6-d20b-44f0-9a34-b961caeaa386)
 
