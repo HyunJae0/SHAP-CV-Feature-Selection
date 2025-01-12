@@ -124,7 +124,11 @@ def bootstrap_auc(clf, X_train, y_train, X_test, y_test, nsamples=2000):
         auc_bootstrap.append(roc_auc)
     return np.percentile(auc_bootstrap, (2.5, 97.5))
 ```
-그리고 변수 개수만큼 만들어진 모델들에 대해 신뢰 구간 95%에서 2,000번 부트스트랩한 roc_auc 값을 기준으로 신뢰구간 평균 차이를 통해 가장 성능이 좋은 모델을 선정했습니다. 이 내용은 아래 Jupyter Notebook에 기술되어 있습니다.
+그리고 변수 개수만큼 만들어진 모델들에 대해 신뢰 구간 95%에서 2,000번 부트스트랩한 roc_auc 값을 기준으로 신뢰 구간 평균 차이를 통해 가장 성능이 좋은 모델을 선정했습니다. 이 내용은 아래 Jupyter Notebook에 기술되어 있습니다.
+부트스트랩: https://github.com/HyunJae0/SHAP-CV-Feature-Selection/blob/main/%EC%8B%A0%ED%98%BC%EA%B0%80%EA%B5%AC%20xgboost%20AUC%20%EB%B6%80%ED%8A%B8%EC%8A%A4%ED%8A%B8%EB%9E%A9%2095%25%20%EC%8B%A0%EB%A2%B0%20%EA%B5%AC%EA%B0%84-Copy1.ipynb
+
+신뢰 구간 평균 차이 https://github.com/HyunJae0/SHAP-CV-Feature-Selection/blob/main/%EC%84%B1%EB%8A%A5%20%EC%A0%95%EB%A6%AC_%EC%8B%A0%ED%98%BC%EA%B0%80%EA%B5%AC-Copy1.ipynb
+
 
 # 결과
 예를 들어 신혼 가구의 공공임대주택 입주의향 모델 중 XGBoost 모델은 변수 개수별 모델별로 부트스트랩을 2000번 수행해서 비교한 결과, 17개의 변수를 사용했을 때 가장 성능이 높았습니다.
