@@ -23,11 +23,29 @@ https://github.com/HyunJae0/SHAP-CV-Feature-Selection/blob/main/preprocessing.ip
 이외에도 가구의 재무 건전성을 확인하기 위해 총 소득 대비 생활비의 비중, 총 소득 대비 월평균 주거관리비의 비중, 중/장기부채부담지표, 총 자산 대비 금융/기타 자산의 비중 등 다양한 파생 변수를 추가하였습니다.
 
 ## 2. SHAP
-### 2.1 Optuna
+SHAP은 머신러닝 모델의 예측 결과에 대한 특성 중요도(feature importance)를 해석하고 시각화하기 위한 것으로, Shapley value를 기반으로 각 특성이 모델 예측에 기여하는 영향을 추정합니다.
 
 ### 2.2 combine one-hot
+범주형 변수를 원-핫 인코딩하여 사용할 경우, 개별 카테고리에 대한 shap value가 계산됩니다. 범주형 변수 자체가 모델에 미치는 영향을 확인하기 위해 원-핫 인코딩된 개별 카테고리의 shap value를 다시 하나의 범주형 변수로 결합합니다. 
+
+이를 위한 코드는 https://github.com/shap/shap/issues/1654에 게시된 코드를 사용하였습니다.
+이 코드는 여러 개의 원-핫 인코딩된 카테고리들의 SHAP값을 통합해서 하나의 SHAP Explanation으로 반환하는 함수입니다. mask = True인 카테고리 컬럼들의 SHAP 정보를 모아 sv_name이라는 객체를 만듭니다. 그리고 sv_name.values.sum(axis=1)로 원-핫 인코딩된 개별 카테고리 컬럼에 분산되어 있던 shap value를 하나의 값으로 합칩니다. 예를 들어 '가구주 성별'이라는 두 개의 카테고리(남성, 여성)를 가지는 범주형 변수가 원-핫 인코딩되어 가구주 성별_남성, 가구주 성별_여성으로 나뉘어 각각 shap value를 가졌었다면, combine_one_hot 함수를 통해 두 개의 shap value가 합쳐진 값이 '가구주 성별'의 shap value가 됩니다.
 
 ### 2.3 Nested Stratified K-Fold Cross-Validation
+데이터를 4개의 그룹(청년, 신혼, 중장년, 고령)으로 나눴을 때, 신혼 그룹의 데이터 개수는 6,119개 였습니다. 
+
+적은 데이터로 모델 성능의 일반화를 확인하기 위해 cross validation을 사용했습니다. 이때 일반적인 cross validation이 아닌 nestesd cross validation을 사용했습니다.
+
+예를 들어, 일반적인 k-fold cross validation은 k개의 fold를 만들면, 하나의 fold를 test set으로 지정하고 남은 k-1개의 fold를 train set으로 지정해 학습을 진행합니다. 만약, k = 5라면 이 과정을 5번 반복합니다.
+그리고 일반적으로 train set과 valid set에 대한 교차 검증은 unseen data에 모델을 적용하기 전, 성능 검증이나 하이퍼파라미터를 탐색하기 위해서, train set과 test set에 대한 교차 검증은 다양한 test data에 대해 model의 일반화 성능을 평가하기 위해서입니다.
+nested cross validation은 이 두 종류의 교차 검증을 수행하여, 두 효과를 모두 이용하는 방법입니다. 
+
+이 방법은 train set과 test set을 k개의 fold로 나눈 뒤, 각 fold의 train set을 다시 n개의 train-valid fold로 분할합니다. 즉, 총 k*n개의 모델이 생성되므로 모델 튜닝과 동시에 일반화 성능까지 확인할 수 있습니다. 사용하는 방법은 다음 코드와 같이 outer fold와 inner fold를 설정합니다. outer fold는 최종 모델의 일반화 성능을 추정, inner fold는 하이퍼파라미터를 찾아 모델을 튜닝하기 위해 사용됩니다. 다음과 같이 outer = 10, inner = 3으로 한다면, 총 30개의 모델이 생성됩니다.
+
+이때, 데이터 셋의 클래스 분포가 일정하지 않아서 stratified k-fold를 사용하였으며, 셔플을 통해 각 폴드가 전체 데이터 분포를 더 잘 대표하도록 하였습니다. 
+
+그리고 하이퍼파라미터를 찾기 위해 하이퍼파라미터 최적화 프레임워크인 Optuna를 사용했습니다. 탐색할 하이퍼파라미터의 space를 정의하면, 그 안에서 샘플링하여 하이퍼파라미터 최적화를 진행합니다. 다양한 하이퍼파라미터를 튜닝해서 사용할 것이기 때문에 모든 하이퍼파라미터의 space를 확인하는 그리드 서치를 이용하는 방법은 사용하지 않았습니다.(예. 랜덤 서치 후, 그리디 서치)
+
 ```
 skf_outer = StratifiedKFold(n_splits=10, shuffle=True, random_state=0)
 skf_inner = StratifiedKFold(n_splits=3, shuffle=True, random_state=0)
