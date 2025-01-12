@@ -23,7 +23,76 @@ https://github.com/HyunJae0/SHAP-CV-Feature-Selection/blob/main/preprocessing.ip
 이외에도 가구의 재무 건전성을 확인하기 위해 총 소득 대비 생활비의 비중, 총 소득 대비 월평균 주거관리비의 비중, 중/장기부채부담지표, 총 자산 대비 금융/기타 자산의 비중 등 다양한 파생 변수를 추가하였습니다.
 
 ## 2. SHAP
+### 2.1 Optuna
 
+### 2.2 combine one-hot
+
+### 2.3 Nested Stratified K-Fold Cross-Validation
+```
+skf_outer = StratifiedKFold(n_splits=10, shuffle=True, random_state=0)
+skf_inner = StratifiedKFold(n_splits=3, shuffle=True, random_state=0)
+
+shap_values = np.zeros_like(X_42)
+shap_data = np.zeros_like(X_42)
+
+skf_scores1 = np.zeros(10)
+skf_scores2 = np.zeros(10)
+base_score = np.zeros(10)
+
+for index, (train_index, test_index) in enumerate(skf_outer.split(X_42, y_42)):    
+    direction = "maximize"
+    early_stopping = EarlyStoppingCallback(10, direction=direction)
+    sampler = optuna.samplers.TPESampler(seed=10)
+    study =  optuna.create_study(direction=direction, sampler=sampler, 
+                             pruner=optuna.pruners.HyperbandPruner())
+    
+    print('\n------ Fold Number:',index)
+    X_train_42, X_test_42 = X_42.iloc[train_index], X_42.iloc[test_index]
+    y_train_42, y_test_42 = y_42.iloc[train_index], y_42.iloc[test_index]
+    
+    base_42 = XGBClassifier(random_state = 0,booster = 'gbtree',objective = 'binary:logistic')
+    base_42.fit(X_train_42, y_train_42)
+    base_proba_42 = base_42.predict_proba(X_test_42)[:, 1]
+    base_score[index] = roc_auc_score(y_test_42, base_proba_42)
+    print('TEST ROC_AUC (Base Model):',base_score[index])
+
+    clf = XGBClassifier(random_state = 0,booster = 'gbtree',objective = 'binary:logistic')
+    param_distributions = {
+        'n_estimators' :optuna.distributions.IntDistribution(50, 200),
+        'learning_rate' :optuna.distributions.FloatDistribution(0.01, 0.1,step=0.01),
+        'max_depth' :optuna.distributions.IntDistribution(1, 10),
+        'max_leaves': optuna.distributions.IntDistribution(2, 1024, step=2),
+        'subsample':optuna.distributions.FloatDistribution(0.1, 1.0,step=0.1),
+        'colsample_bytree' :optuna.distributions.FloatDistribution(0.1, 1.0,step=0.1),
+        'gamma' :optuna.distributions.IntDistribution(1, 10),
+        'reg_alpha' :optuna.distributions.IntDistribution(1, 10),
+        'reg_lambda' :optuna.distributions.IntDistribution(1, 10)
+        }
+    
+    optuna_search_42 = optuna.integration.OptunaSearchCV(estimator = clf, param_distributions=param_distributions, 
+                                                      n_trials=200, study = study, cv=skf_inner, scoring = 'roc_auc', refit = True,
+                                                      random_state=0,callbacks=[early_stopping])
+    result_42 = optuna_search_42.fit(X_train_42, y_train_42) 
+    result_42.best_estimator_.fit(X_train_42, y_train_42)      
+
+    explainer_42 = shap.TreeExplainer(result_42.best_estimator_)
+    shap_values_te = explainer_42(X_test_42)
+    shap_values[test_index,:] = shap_values_te.values
+    shap_data[test_index,:] = shap_values_te.data
+    
+    y_train_pred_proba_42 = result_42.best_estimator_.predict_proba(X_train_42)[:, 1]
+    skf_scores1[index] = roc_auc_score(y_train_42, y_train_pred_proba_42)
+    print('Train ROC_AUC:',skf_scores1[index])
+    
+    y_test_pred_proba_42 = result_42.best_estimator_.predict_proba(X_test_42)[:, 1]
+    skf_scores2[index] = roc_auc_score(y_test_42, y_test_pred_proba_42)
+    print('TEST ROC_AUC:',skf_scores2[index])
+    
+print('')
+print('train set mean roc_auc',round(np.mean(skf_scores1),3))
+print('test set mean roc_auc(Base)',round(np.mean(base_score),3))
+print('test set mean roc_auc',round(np.mean(skf_scores2),3))
+```
 
 # 결과
 예를 들어 신혼 가구의 공공임대주택 입주의향 모델 중 XGBoost 모델은 변수 개수별 모델별로 부트스트랩을 2000번 수행해서 비교한 결과, 17개의 변수를 사용했을 때 가장 성능이 높았습니다.
