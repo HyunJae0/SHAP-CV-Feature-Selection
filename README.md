@@ -116,10 +116,10 @@ train-validation-test 분할을 통해 하이퍼파라미터 탐색용 데이터
 
 #### 5.1.1 가장 필요한 주거지원 프로그램
 <p align="center">
-  <img src="img/청년_주거지원프로그램.png" width="30%" />
-  <img src="img/신혼_주거지원프로그램.png" width="30%" />
-  <img src="img/중장년_주거지원프로그램.png" width="30%" />
-  <img src="img/고령_주거지원프로그램.png" width="30%" />
+  <img src="img/청년_주거지원프로그램.png" width="25%" />
+  <img src="img/신혼_주거지원프로그램.png" width="25%" />
+  <img src="img/중장년_주거지원프로그램.png" width="25%" />
+  <img src="img/고령_주거지원프로그램.png" width="25%" />
 </p>
 
 
