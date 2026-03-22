@@ -102,6 +102,12 @@ train-validation-test 분할을 통해 하이퍼파라미터 탐색용 데이터
 
 ## 5. 결과  
 아래의 결과 해석은 변수값과 예측값의 관계가 비교적 분명하게 나타나는 변수에 한정하였다.
+<p align="center">
+  <img src="img/shap_plots_beeswarm_청년.png" width="23%" />
+  <img src="img/shap_plots_beeswarm_신혼.png" width="23%" />
+  <img src="img/shap_plots_beeswarm_중장년.png" width="23%" />
+  <img src="img/shap_plots_beeswarm_고령.png" width="23%" />
+</p>
 
 ### 5.1 모든 가구 유형에서 공통적으로 나타난 주요 변수
 네 가구 유형 모두에서 입주의향에 가장 큰 영향을 미치는 feature는 '필요 주거지원 프로그램(1순위)'인 것을 확인할 수 있다. 이는 공공임대주택 입주의향 예측에서 단순한 현재 주거상태 변수보다, 가구가 어떤 형태의 주거지원을 필요로 인식하는지가 가장 직접적인 신호로 작동했음을 의미한다.
