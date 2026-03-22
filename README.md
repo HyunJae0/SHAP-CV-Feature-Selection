@@ -101,7 +101,7 @@ train-validation-test 분할을 통해 하이퍼파라미터 탐색용 데이터
 ---
 
 ## 5. 결과  
-아래의 결과 해석은 변수값과 예측값의 관계가 비교적 분명하게 나타나는 변수에 한정하였다.
+아래의 결과 해석은 변수값과 예측값의 관계가 비교적 분명하게 나타나는 변수에 한정하였다. 아래 그림은 순서대로 청년, 신혼, 중장년, 고령가구에 대한 결과이다. 
 <p align="center">
   <img src="img/shap_plots_beeswarm_청년.png" width="23%" />
   <img src="img/shap_plots_beeswarm_신혼.png" width="23%" />
