@@ -69,6 +69,11 @@
 
 ## 4. Methodology
 
+<p align="center">
+  <img src="./img/methodology.png" width="600">
+</p>
+ㅇ
+
 ---
 
 ## 5. 결과
